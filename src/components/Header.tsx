@@ -17,10 +17,10 @@ export function Header({ title, hideProfile }: { title?: string; hideProfile?: b
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <button className="p-2 text-muted-foreground hover:text-foreground relative">
+                    <Link href="/notifications" className="p-2 text-muted-foreground hover:text-foreground relative">
                         <Bell className="h-5 w-5" />
                         <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
-                    </button>
+                    </Link>
 
                     {!hideProfile && (user ? (
                         <div className="flex items-center gap-2">

@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useApp } from "@/lib/context";
+import { LogIn, Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import Link from "next/link";
+import { useApp } from "@/lib/context";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -13,62 +14,69 @@ export default function LoginPage() {
     const { login } = useApp();
     const router = useRouter();
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simula delay
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         login(email);
-        setIsLoading(false);
         router.push("/");
     };
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-background">
             <div className="w-full max-w-sm space-y-6">
-                <div className="flex flex-col items-center space-y-2 text-center">
-                    <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center mb-2">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="h-6 w-6 text-primary-foreground"
-                        >
-                            <path d="M12 2v20M2 12h20" />
-                        </svg>
+                <div className="text-center space-y-2">
+                    <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <LogIn className="h-6 w-6 text-primary" />
                     </div>
                     <h1 className="text-2xl font-bold tracking-tight">Bem-vindo de volta</h1>
                     <p className="text-sm text-muted-foreground">
-                        Entre para encontrar missões ou contratar ajuda.
+                        Entre para continuar no Mercado de Missões
                     </p>
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-2">
-                        <label htmlFor="email" className="text-sm font-medium leading-none">Email</label>
-                        <Input
-                            id="email"
-                            placeholder="seu@email.com"
-                            required
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
+                        <label className="text-sm font-medium">Email</label>
+                        <div className="relative">
+                            <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                type="email"
+                                placeholder="seu@email.com"
+                                className="pl-9"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
                     </div>
+
                     <div className="space-y-2">
-                        <label htmlFor="password" className="text-sm font-medium leading-none">Senha</label>
-                        <Input id="password" type="password" placeholder="••••••••" required />
+                        <label className="text-sm font-medium">Senha</label>
+                        <div className="relative">
+                            <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                type="password"
+                                placeholder="••••••••"
+                                className="pl-9"
+                                required
+                            />
+                        </div>
                     </div>
+
                     <Button type="submit" className="w-full" disabled={isLoading}>
                         {isLoading ? "Entrando..." : "Entrar"}
                     </Button>
                 </form>
 
-                <div className="text-center text-sm text-muted-foreground">
-                    <p>Não tem conta? <span className="underline cursor-pointer hover:text-foreground">Cadastre-se</span></p>
+                <div className="text-center text-sm">
+                    Não tem uma conta?{" "}
+                    <Link href="/register" className="underline underline-offset-4 hover:text-primary font-medium">
+                        Criar conta
+                    </Link>
                 </div>
             </div>
         </div>
