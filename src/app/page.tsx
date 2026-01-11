@@ -3,6 +3,7 @@
 import { Header } from "@/components/Header";
 import { MissionCard } from "@/components/MissionCard";
 import { useApp } from "@/lib/context";
+import { Onboarding } from "@/components/Onboarding";
 
 export default function Home() {
   const { missions } = useApp();
@@ -10,6 +11,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <Onboarding />
       <Header />
       <main className="flex-1 container max-w-screen-sm mx-auto p-4 py-8">
         <div className="flex flex-col gap-6">
