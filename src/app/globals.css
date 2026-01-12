@@ -3,57 +3,72 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  
+
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-  
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 :root {
-  --background: #09090b; /* Zinc 950 */
-  --foreground: #fafafa; /* Zinc 50 */
-  
-  --primary: #fafafa;
-  --primary-foreground: #18181b;
-  
-  --secondary: #27272a; /* Zinc 800 */
-  --secondary-foreground: #fafafa;
-  
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
-  
-  --destructive: #7f1d1d;
-  --destructive-foreground: #fafafa;
-  
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #d4d4d8;
-  
+  /* Professional Palette - Sophisticated Blue & Neutrals */
+  --background: #0a0a0f;
+  /* Deep navy-black */
+  --foreground: #f8f9fa;
+  /* Soft white */
+
+  /* Primary - Professional Blue */
+  --primary: #3b82f6;
+  /* Blue 500 */
+  --primary-foreground: #ffffff;
+
+  /* Secondary - Refined Gray */
+  --secondary: #1e293b;
+  /* Slate 800 */
+  --secondary-foreground: #f1f5f9;
+
+  /* Muted - Subtle backgrounds */
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  /* Slate 400 */
+
+  /* Accent - Highlight */
+  --accent: #2563eb;
+  /* Blue 600 */
+  --accent-foreground: #ffffff;
+
+  /* Semantic */
+  --destructive: #ef4444;
+  /* Red 500 */
+  --destructive-foreground: #ffffff;
+
+  /* Borders - Subtle */
+  --border: #334155;
+  /* Slate 700 */
+  --input: #1e293b;
+  --ring: #3b82f6;
+
   --radius: 0.5rem;
 }
 
@@ -79,13 +94,16 @@ body {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);
 }
