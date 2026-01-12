@@ -4,9 +4,13 @@ import { Header } from "@/components/Header";
 import { MissionCard } from "@/components/MissionCard";
 import { useApp } from "@/lib/context";
 import { Onboarding } from "@/components/Onboarding";
+import { EmptyState } from "@/components/EmptyState";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { missions } = useApp();
+  const router = useRouter();
   const availableMissions = missions.filter(m => m.status === "available");
 
   return (
@@ -24,19 +28,16 @@ export default function Home() {
 
           <div className="grid gap-4">
             {availableMissions.length === 0 ? (
-              <div className="p-12 text-center border border-dashed border-muted-foreground/25 rounded-lg space-y-4">
-                <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-2">
-                  <svg className="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Nenhuma missão disponível</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Seja o primeiro a criar uma missão ou aguarde novas oportunidades.
-                  </p>
-                </div>
-              </div>
+              <EmptyState
+                icon={require("lucide-react").MapPin}
+                title="Nenhuma missão disponível"
+                description="Seja o primeiro a criar uma missão ou aguarde novas oportunidades na sua região."
+                action={
+                  <Button onClick={() => router.push('/create')} variant="outline" className="mt-4">
+                    Criar Missão
+                  </Button>
+                }
+              />
             ) : (
               availableMissions.map((mission) => (
                 <MissionCard key={mission.id} mission={mission} />

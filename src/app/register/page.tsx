@@ -20,6 +20,7 @@ export default function RegisterPage() {
     const [cpf, setCpf] = useState("");
     const { registerUser } = useApp();
     const router = useRouter();
+    const { addToast } = useToast();
 
     const validateCPF = (cpf: string) => {
         const cleaned = cpf.replace(/\D/g, '');

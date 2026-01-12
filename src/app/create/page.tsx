@@ -8,14 +8,17 @@ import Link from "next/link";
 import { useState } from "react";
 import { useApp } from "@/lib/context";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
 
 export default function CreateMissionPage() {
     const [isLoading, setIsLoading] = useState(false);
     const { addMission } = useApp();
     const router = useRouter();
+    const { addToast } = useToast();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
+
         setIsLoading(true);
 
         const formData = new FormData(e.currentTarget);
@@ -33,6 +36,7 @@ export default function CreateMissionPage() {
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setIsLoading(false);
+        addToast({ type: "success", title: "Missão Publicada!", message: "Sua missão já está disponível para prestadores." });
         router.push("/");
     }
 

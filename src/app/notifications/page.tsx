@@ -3,6 +3,7 @@
 import { Header } from "@/components/Header";
 import { Bell, CheckCircle, Clock, DollarSign } from "lucide-react";
 import Link from "next/link";
+import { EmptyState } from "@/components/EmptyState";
 
 export default function NotificationsPage() {
     // Mock notifications - in real app would come from backend
@@ -46,13 +47,11 @@ export default function NotificationsPage() {
 
                 <div className="mt-6 space-y-4">
                     {notifications.length === 0 ? (
-                        <div className="p-12 text-center border border-dashed border-muted-foreground/25 rounded-lg">
-                            <Bell className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                            <h3 className="font-semibold text-lg mb-1">Nenhuma notificação</h3>
-                            <p className="text-sm text-muted-foreground">
-                                Você está em dia! Não há notificações novas.
-                            </p>
-                        </div>
+                        <EmptyState
+                            icon={Bell}
+                            title="Nenhuma notificação"
+                            description="Você está em dia! Não há novas mensagens ou avisos no momento."
+                        />
                     ) : (
                         notifications.map((notification) => {
                             const Icon = notification.icon;
@@ -60,8 +59,8 @@ export default function NotificationsPage() {
                                 <div
                                     key={notification.id}
                                     className={`p-4 rounded-lg border transition-colors ${notification.read
-                                            ? "bg-card border-border"
-                                            : "bg-primary/5 border-primary/20"
+                                        ? "bg-card border-border"
+                                        : "bg-primary/5 border-primary/20"
                                         }`}
                                 >
                                     <div className="flex items-start gap-3">
