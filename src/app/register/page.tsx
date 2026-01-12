@@ -175,112 +175,110 @@ export default function RegisterPage() {
                         </div>
                     )}
 
-                    {/* Step 2: Document Upload */}
+                    {/* Step 2: Identidade e Segurança (Stripe Identity) */}
                     {step === 2 && (
                         <div className="space-y-6 animate-in slide-in-from-right-8 fade-in duration-300">
-                            <div className="rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 text-center bg-muted/30">
+                            <div className="rounded-lg border border-border bg-card p-6 text-center space-y-4">
+                                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                                    <ShieldCheck className="h-8 w-8 text-primary" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-lg">Verificação Oficial</h3>
+                                    <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+                                        Para garantir a segurança de todos, usamos tecnologia bancária para verificar seu documento e rosto.
+                                    </p>
+                                </div>
+
                                 {documentUploaded ? (
-                                    <div className="space-y-3">
-                                        <div className="h-16 w-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
-                                            <CheckCircle2 className="h-8 w-8 text-green-500" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold">Documento Recebido</h3>
-                                            <p className="text-sm text-muted-foreground">Seu documento foi enviado com sucesso</p>
-                                        </div>
+                                    <div className="bg-green-500/10 text-green-500 p-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium">
+                                        <CheckCircle2 className="h-4 w-4" />
+                                        Identidade Verificada com Sucesso
                                     </div>
                                 ) : (
-                                    <div className="space-y-4">
-                                        <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                                            <FileText className="h-8 w-8 text-primary" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-lg">Documento de Identidade</h3>
-                                            <p className="text-sm text-muted-foreground mt-1">
-                                                Envie uma foto clara do seu RG ou CNH
-                                            </p>
-                                        </div>
-                                        <label className="cursor-pointer">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                className="hidden"
-                                                onChange={handleDocumentUpload}
-                                            />
-                                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
-                                                <Upload className="h-4 w-4" />
-                                                Escolher Arquivo
-                                            </div>
-                                        </label>
-                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="w-full h-12 border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors"
+                                        onClick={async () => {
+                                            setIsLoading(true);
+                                            try {
+                                                const res = await fetch('/api/identity', {
+                                                    method: 'POST',
+                                                    body: JSON.stringify({ userId: 'temp-user', email: 'user@example.com' })
+                                                });
+                                                const data = await res.json();
+
+                                                if (data.error && data.message.includes("SANDBOX_MODE")) {
+                                                    addToast({
+                                                        type: "info",
+                                                        title: "Modo Simulação",
+                                                        message: "Simulando verificação (Stripe Identity requer chaves reais).",
+                                                        duration: 4000
+                                                    });
+                                                    setTimeout(() => {
+                                                        setDocumentUploaded(true);
+                                                        setFaceVerified(true);
+                                                        addToast({ type: "success", title: "Verificado!", message: "Identidade confirmada." });
+                                                        setIsLoading(false);
+                                                    }, 2000);
+                                                } else if (data.url) {
+                                                    window.location.href = data.url;
+                                                }
+                                            } catch (error) {
+                                                addToast({ type: "error", title: "Erro", message: "Não foi possível iniciar a verificação." });
+                                                setIsLoading(false);
+                                            }
+                                        }}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                Conectando à Verificação...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ShieldCheck className="mr-2 h-4 w-4" />
+                                                Iniciar Verificação de Identidade
+                                            </>
+                                        )}
+                                    </Button>
                                 )}
                             </div>
-
-                            <div className="flex items-start gap-2 text-xs text-muted-foreground bg-blue-500/10 p-3 rounded-md">
-                                <ShieldCheck className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-                                <p className="text-blue-500">
-                                    Seus documentos são criptografados e armazenados com segurança. Usamos apenas para verificação de identidade.
-                                </p>
+                            <div className="text-xs text-muted-foreground text-center px-4">
+                                Seus dados são processados de forma segura pela <strong>Stripe Identity</strong> seguindo as normas da <strong>LGPD</strong>.
                             </div>
                         </div>
                     )}
 
-                    {/* Step 3: Face ID */}
+                    {/* Step 3: Confirmation */}
                     {step === 3 && (
-                        <div className="space-y-6 animate-in slide-in-from-right-8 fade-in duration-300">
-                            <div className="rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 flex flex-col items-center justify-center text-center gap-4 bg-muted/30">
-                                {faceVerified ? (
-                                    <>
-                                        <div className="h-20 w-20 rounded-full bg-green-500/20 flex items-center justify-center">
-                                            <CheckCircle2 className="h-10 w-10 text-green-500" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-lg">Identidade Confirmada!</h3>
-                                            <p className="text-sm text-muted-foreground">Seu rosto foi verificado com sucesso</p>
-                                        </div>
-                                    </>
-                                ) : isVerifying ? (
-                                    <>
-                                        <div className="relative">
-                                            <div className="h-20 w-20 rounded-full border-4 border-primary/20 flex items-center justify-center">
-                                                <Camera className="h-10 w-10 text-primary animate-pulse" />
-                                            </div>
-                                            <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-lg">Analisando...</h3>
-                                            <p className="text-sm text-muted-foreground">Verificando biometria facial</p>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-                                            <Camera className="h-10 w-10 text-primary" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-lg">Reconhecimento Facial</h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                Posicione seu rosto no centro da câmera
-                                            </p>
-                                        </div>
-                                        <Button type="button" onClick={handleFaceVerify} className="w-full">
-                                            <Camera className="mr-2 h-4 w-4" />
-                                            Iniciar Verificação
-                                        </Button>
-                                    </>
-                                )}
-                            </div>
-
-                            {!faceVerified && (
-                                <div className="space-y-2 text-xs text-muted-foreground">
-                                    <p className="font-medium">Dicas para melhor verificação:</p>
-                                    <ul className="list-disc list-inside space-y-1 ml-2">
-                                        <li>Certifique-se de estar em local bem iluminado</li>
-                                        <li>Remova óculos escuros ou acessórios</li>
-                                        <li>Olhe diretamente para a câmera</li>
-                                    </ul>
+                        <div className="space-y-6 animate-in slide-in-from-right-8 fade-in duration-300 text-center">
+                            <div className="py-8">
+                                <div className="h-24 w-24 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-6 animate-in zoom-in duration-500">
+                                    <CheckCircle2 className="h-12 w-12 text-green-500" />
                                 </div>
-                            )}
+                                <h2 className="text-2xl font-bold mb-2">Tudo Pronto!</h2>
+                                <p className="text-muted-foreground">
+                                    Sua conta foi criada e sua identidade verificada. Você já pode aceitar missões.
+                                </p>
+                            </div>
+                            <div className="bg-muted/50 p-4 rounded-lg text-left text-sm space-y-2 border border-border">
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Nome:</span>
+                                    <span className="font-medium">João da Silva Santos</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">CPF:</span>
+                                    <span className="font-medium">{cpf}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Status:</span>
+                                    <span className="text-green-500 font-medium flex items-center gap-1">
+                                        <ShieldCheck className="h-3 w-3" /> Verificado
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     )}
 
