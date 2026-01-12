@@ -10,7 +10,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function POST(request: Request) {
     try {
         // If keys are missing, return a simulation or specific error
-        if (!process.env.STRIPE_SECRET_KEY) {
+        if (!stripe) {
             return NextResponse.json(
                 {
                     error: "Stripe not configured",
