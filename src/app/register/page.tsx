@@ -7,6 +7,7 @@ import { Camera, CheckCircle2, ShieldCheck, Loader2, Upload, FileText, User, Mai
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/context";
+import { useToast } from "@/components/ui/toast";
 
 type Step = 1 | 2 | 3;
 
@@ -17,7 +18,7 @@ export default function RegisterPage() {
     const [faceVerified, setFaceVerified] = useState(false);
     const [documentUploaded, setDocumentUploaded] = useState(false);
     const [cpf, setCpf] = useState("");
-    const { login } = useApp();
+    const { registerUser } = useApp();
     const router = useRouter();
 
     const validateCPF = (cpf: string) => {
@@ -81,8 +82,15 @@ export default function RegisterPage() {
             }
 
             setIsLoading(true);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            login("novo.usuario@email.com");
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Simulando processamento visual
+
+            // Create real user session
+            registerUser({
+                name: "Novo Usuário", // In real app would come from input state
+                email: "usuario@email.com", // Should come from state
+                cpf: cpf
+            });
+
             router.push("/");
         }
     };
@@ -92,7 +100,7 @@ export default function RegisterPage() {
             {[1, 2, 3].map((s) => (
                 <div key={s} className="flex items-center">
                     <div className={`h-2 w-2 rounded-full transition-all ${s === step ? 'bg-primary w-8' :
-                            s < step ? 'bg-primary' : 'bg-muted'
+                        s < step ? 'bg-primary' : 'bg-muted'
                         }`} />
                 </div>
             ))}
