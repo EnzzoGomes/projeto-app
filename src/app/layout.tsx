@@ -5,6 +5,7 @@ import { AppProvider } from "@/lib/context";
 import { BottomNav } from "@/components/BottomNav";
 import { PageTransition } from "@/components/PageTransition";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { ToastProvider } from "@/components/ui/toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,15 +38,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AppProvider>
-          <div className="flex min-h-screen flex-col bg-background text-foreground relative pb-16 md:pb-0">
-            <PageTransition>
-              {children}
-            </PageTransition>
-            <BottomNav />
-            <InstallPrompt />
-          </div>
-        </AppProvider>
+        <ToastProvider>
+          <AppProvider>
+            <div className="flex min-h-screen flex-col bg-background text-foreground relative pb-16 md:pb-0">
+              <PageTransition>
+                {children}
+              </PageTransition>
+              <BottomNav />
+              <InstallPrompt />
+            </div>
+          </AppProvider>
+        </ToastProvider>
       </body>
     </html>
   );
