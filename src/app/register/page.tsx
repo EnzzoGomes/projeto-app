@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Camera, CheckCircle2, ShieldCheck, Loader2, Upload, FileText, User, Mail, Phone, CreditCard, AlertCircle, Lock } from "lucide-react";
@@ -21,9 +21,16 @@ export default function RegisterPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { registerUser } = useApp();
+    const { registerUser, user } = useApp();
     const router = useRouter();
     const { addToast } = useToast();
+
+    // Se já estiver logado, redirecionar para home
+    useEffect(() => {
+        if (user) {
+            router.push("/");
+        }
+    }, [user, router]);
 
     const validateCPF = (cpf: string) => {
         const cleaned = cpf.replace(/\D/g, '');

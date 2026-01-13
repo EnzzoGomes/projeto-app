@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { PageTransition } from "@/components/PageTransition";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { ToastProvider } from "@/components/ui/toast";
+import { AuthGuard } from "@/components/AuthGuard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,13 +41,15 @@ export default function RootLayout({
       >
         <ToastProvider>
           <AppProvider>
-            <div className="flex min-h-screen flex-col bg-background text-foreground relative pb-16 md:pb-0">
-              <PageTransition>
-                {children}
-              </PageTransition>
-              <BottomNav />
-              <InstallPrompt />
-            </div>
+            <AuthGuard>
+              <div className="flex min-h-screen flex-col bg-background text-foreground relative pb-16 md:pb-0">
+                <PageTransition>
+                  {children}
+                </PageTransition>
+                <BottomNav />
+                <InstallPrompt />
+              </div>
+            </AuthGuard>
           </AppProvider>
         </ToastProvider>
       </body>
