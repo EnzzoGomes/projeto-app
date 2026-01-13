@@ -7,11 +7,14 @@ import { LogIn, Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/context";
+import { useToast } from "@/components/ui/toast";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { login } = useApp();
+    const { addToast } = useToast();
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -19,10 +22,21 @@ export default function LoginPage() {
         setIsLoading(true);
 
         // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 800));
 
-        login(email);
-        router.push("/");
+        const success = login(email, password);
+
+        if (success) {
+            addToast({ type: "success", title: "Bem-vindo!", message: "Login realizado com sucesso." });
+            router.push("/");
+        } else {
+            addToast({
+                type: "error",
+                title: "Falha no Login",
+                message: "Email ou senha incorretos. Verifique se você já possui cadastro."
+            });
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -62,6 +76,8 @@ export default function LoginPage() {
                                 type="password"
                                 placeholder="••••••••"
                                 className="pl-9"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>

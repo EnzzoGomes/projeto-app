@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Camera, CheckCircle2, ShieldCheck, Loader2, Upload, FileText, User, Mail, Phone, CreditCard, AlertCircle } from "lucide-react";
+import { Camera, CheckCircle2, ShieldCheck, Loader2, Upload, FileText, User, Mail, Phone, CreditCard, AlertCircle, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useApp } from "@/lib/context";
@@ -18,6 +18,9 @@ export default function RegisterPage() {
     const [faceVerified, setFaceVerified] = useState(false);
     const [documentUploaded, setDocumentUploaded] = useState(false);
     const [cpf, setCpf] = useState("");
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const { registerUser } = useApp();
     const router = useRouter();
     const { addToast } = useToast();
@@ -87,8 +90,9 @@ export default function RegisterPage() {
 
             // Create real user session
             registerUser({
-                name: "Novo Usuário", // In real app would come from input state
-                email: "usuario@email.com", // Should come from state
+                name: name,
+                email: email,
+                password: password,
                 cpf: cpf
             });
 
@@ -134,7 +138,12 @@ export default function RegisterPage() {
                                     <User className="h-4 w-4 text-muted-foreground" />
                                     Nome Completo
                                 </label>
-                                <Input placeholder="João da Silva Santos" required />
+                                <Input
+                                    placeholder="João da Silva Santos"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -162,7 +171,13 @@ export default function RegisterPage() {
                                     <Mail className="h-4 w-4 text-muted-foreground" />
                                     Email
                                 </label>
-                                <Input type="email" placeholder="joao@exemplo.com" required />
+                                <Input
+                                    type="email"
+                                    placeholder="joao@exemplo.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -171,6 +186,20 @@ export default function RegisterPage() {
                                     Telefone
                                 </label>
                                 <Input type="tel" placeholder="(11) 99999-9999" required />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium flex items-center gap-2">
+                                    <Lock className="h-4 w-4 text-muted-foreground" />
+                                    Sua Senha
+                                </label>
+                                <Input
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
                             </div>
                         </div>
                     )}
@@ -266,7 +295,7 @@ export default function RegisterPage() {
                             <div className="bg-muted/50 p-4 rounded-lg text-left text-sm space-y-2 border border-border">
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Nome:</span>
-                                    <span className="font-medium">João da Silva Santos</span>
+                                    <span className="font-medium">{name}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">CPF:</span>

@@ -62,7 +62,8 @@ interface AppContextType {
     messages: Message[];
     workHistory: WorkHistory[];
     user: { name: string; email: string; level: number; xp: number; rating: number; verified?: boolean } | null;
-    login: (email: string) => void;
+    registeredUsers: any[]; // Simple storage for this demo
+    login: (email: string, password?: string) => boolean;
     logout: () => void;
     addMission: (mission: Omit<Mission, "id" | "status" | "distance">) => void;
     acceptMission: (id: string) => void;
@@ -84,6 +85,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const [friends, setFriends] = useState<Friend[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [workHistory, setWorkHistory] = useState<WorkHistory[]>([]);
+    const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
     const [user, setUser] = useState<{ name: string; email: string; level: number; xp: number; rating: number; verified?: boolean } | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -97,6 +99,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             const savedFriends = localStorage.getItem("mission-market:friends");
             const savedMessages = localStorage.getItem("mission-market:messages");
             const savedHistory = localStorage.getItem("mission-market:workHistory");
+            const savedRegistered = localStorage.getItem("mission-market:registered-users");
 
             if (savedMissions) setMissions(JSON.parse(savedMissions));
             if (savedBalance) setUserBalance(parseFloat(savedBalance));
@@ -105,6 +108,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             if (savedFriends) setFriends(JSON.parse(savedFriends));
             if (savedMessages) setMessages(JSON.parse(savedMessages));
             if (savedHistory) setWorkHistory(JSON.parse(savedHistory));
+            if (savedRegistered) setRegisteredUsers(JSON.parse(savedRegistered));
         } catch (error) {
             console.error("Storage Error:", error);
         } finally {
@@ -122,6 +126,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem("mission-market:friends", JSON.stringify(friends));
             localStorage.setItem("mission-market:messages", JSON.stringify(messages));
             localStorage.setItem("mission-market:workHistory", JSON.stringify(workHistory));
+            localStorage.setItem("mission-market:registered-users", JSON.stringify(registeredUsers));
             if (user) {
                 localStorage.setItem("mission-market:user", JSON.stringify(user));
             } else {
@@ -130,7 +135,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Storage Save Error:", error);
         }
-    }, [missions, userBalance, user, notifications, friends, messages, workHistory, isLoaded]);
+    }, [missions, userBalance, user, notifications, friends, messages, workHistory, registeredUsers, isLoaded]);
 
     const addNotification = (title: string, message: string, type: "info" | "success" | "warning" = "info") => {
         const newNotif: Notification = {
@@ -144,39 +149,55 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setNotifications(prev => [newNotif, ...prev]);
     };
 
-    const login = (email: string) => {
-        // In a real app this would validate against DB
-        // For persistence without backend, we check if there's a user saved or create a session
-        const existingUser = localStorage.getItem("mission-market:user");
-        if (existingUser) {
-            const parsed = JSON.parse(existingUser);
-            if (parsed.email === email) {
-                setUser(parsed);
-                return;
+    const login = (email: string, password?: string) => {
+        // Find user by email in our registered list
+        const foundUser = registeredUsers.find(u => u.email === email);
+
+        if (foundUser) {
+            // In a real app we'd compare hashed passwords
+            if (foundUser.password === password) {
+                setUser({
+                    name: foundUser.name,
+                    email: foundUser.email,
+                    level: foundUser.level || 1,
+                    xp: foundUser.xp || 0,
+                    rating: foundUser.rating || 5.0,
+                    verified: foundUser.verified || false
+                });
+                return true;
             }
         }
-
-        // If simply logging in without prior register data (legacy/simple flow), create basic user
-        setUser({
-            name: email.split("@")[0],
-            email,
-            level: 1,
-            xp: 0,
-            rating: 5.0,
-            verified: false
-        });
+        return false;
     };
 
     const registerUser = (data: any) => {
         const newUser = {
+            id: crypto.randomUUID(),
             name: data.name,
             email: data.email,
+            password: data.password, // Stored for login check
             level: 1,
             xp: 0,
             rating: 5.0,
-            verified: true // Assuming they passed the intense registration
+            verified: true, // Assuming they passed the intense registration
+            cpf: data.cpf
         };
-        setUser(newUser);
+
+        setRegisteredUsers(prev => {
+            // Avoid duplicates
+            if (prev.find(u => u.email === data.email)) return prev;
+            return [...prev, newUser];
+        });
+
+        setUser({
+            name: newUser.name,
+            email: newUser.email,
+            level: newUser.level,
+            xp: newUser.xp,
+            rating: newUser.rating,
+            verified: newUser.verified
+        });
+
         addNotification("Bem-vindo!", "Sua conta foi criada com sucesso.", "success");
     };
 
@@ -316,6 +337,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
                 friends,
                 messages,
                 workHistory,
+                registeredUsers,
                 user,
                 login,
                 logout,
